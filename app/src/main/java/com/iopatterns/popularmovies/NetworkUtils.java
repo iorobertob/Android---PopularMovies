@@ -27,7 +27,8 @@ package com.iopatterns.popularmovies;
  */
 public final class NetworkUtils {
 
-    private  static final String API_KEY        = "857a9205586fa1240dc580f4185577fa";
+    //TODO: REPLACE THIS API KEY WITH A VALID STRING!
+    private  static final String API_KEY        = "XXXXXXXXXXXXXXXXXX";
 
     /**
      * This method builds an URL, from a string, by first constructing an URI.
