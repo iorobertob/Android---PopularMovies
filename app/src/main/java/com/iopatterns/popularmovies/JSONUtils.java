@@ -5,14 +5,13 @@ package com.iopatterns.popularmovies;
  *
  */
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This class is used to extract data from the JSON string that is obtained from an API request,
+ * This class, bsed in the Udacity JSONUtils one,
+ * is used to extract data from the JSON string that is obtained from an API request,
  * in this case to theMovieDB.
  * It contains a number of String[] arrays where to store fields for each of the films in the result
  */
