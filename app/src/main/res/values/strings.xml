@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="error">Error while loading data</string>
+    <string name="title_activity_movie_details">Movie Details</string>
+</resources>
