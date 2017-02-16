@@ -1,8 +1,11 @@
 package com.iopatterns.popularmovies;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -124,8 +127,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         // Select from the menu how to sort the list of movies.
 
+        // Execute the AsyncTask with this URL to get movies sorted by votes
         if (item.getItemId() == R.id.sort_rating){
-            // Execute the AsyncTask with this URL to get movies sorted by votes
+
             if(mPopular == true){
 
                 mPage = 1;
@@ -140,8 +144,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         }
 
+        // Execute the AsyncTask with this URL to get movies sorted by popularity
         if (item.getItemId() == R.id.sort_popularity){
-            // Execute the AsyncTask with this URL to get movies sorted by popularity
+
             if(mPopular == false){
 
                 mPage = 1;
@@ -154,6 +159,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
                 mscroll.fullScroll(ScrollView.FOCUS_UP);
             }
 
+        }
+
+        // Show an About Dialog Box to show off
+        if (item.getItemId() == R.id.about_menu){
+            new AlertDialog.Builder(this)
+                    .setTitle("About")
+                    .setMessage(R.string.about_dialog)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .show();
         }
 
         return super.onOptionsItemSelected(item);

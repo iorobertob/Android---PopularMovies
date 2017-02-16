@@ -2,4 +2,10 @@
     <string name="app_name">Popular Movies</string>
     <string name="error">Error while loading data</string>
     <string name="title_activity_movie_details">Movie Details</string>
+    <string name="by_popularity">by Popularity</string>
+    <string name="by_rate">by Rating</string>
+    <string name="about">About</string>
+    <string name="about_dialog">by Roberto Becerra, 2017 \n
+    Under Construction</string>
+    <string name="ok">OK</string>
 </resources>

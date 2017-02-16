@@ -6,11 +6,16 @@
     <item
         android:id="@+id/sort_rating"
         android:orderInCategory="1"
-        android:title="by Rating"/>
+        android:title="@string/by_rate"/>
 
     <item
         android:id="@+id/sort_popularity"
         android:orderInCategory="2"
-        android:title="by Popularity"/>
+        android:title="@string/by_popularity"/>
+
+    <item
+        android:id="@+id/about_menu"
+        android:title="@string/about"
+        android:orderInCategory="3"/>
 
 </menu>
