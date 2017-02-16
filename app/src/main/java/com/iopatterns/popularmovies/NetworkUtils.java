@@ -23,7 +23,8 @@ package com.iopatterns.popularmovies;
         import java.util.Scanner;
 
 /**
- * These utilities will be used to communicate with the API services
+ * These utilities, based in Udacity's class,
+ * will be used to communicate with the API services
  */
 public final class NetworkUtils {
 
