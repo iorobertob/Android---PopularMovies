@@ -125,7 +125,6 @@ public final class JSONUtils {
 
     public static void getDetailDataFromJSON(String detailJSON) throws JSONException
     {
-
         JSONObject moviesJSON = new JSONObject(detailJSON);
 
         ids[0]          = moviesJSON.getString(IDS);

@@ -1,18 +1,23 @@
 package com.iopatterns.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
 import java.net.URL;
+
+import static android.R.id.input;
 
 /**
  * This class is the Child activity that shows the Detailed view for a film, including the
@@ -114,7 +119,23 @@ public class MovieDetails extends AppCompatActivity{
 
     public void addToFavourites()
     {
+        // Insert new Favourite film to dataBase via a ContentResolver
 
+        // Create new empty ContentValues object
+        ContentValues contentValues = new ContentValues();
+
+        // Put the task description and selected mPriority into the ContentValues
+        contentValues.put(TaskContract.TaskEntry.COLUMN_DESCRIPTION, input);
+        contentValues.put(TaskContract.TaskEntry.COLUMN_PRIORITY, mPriority);
+
+        // Insert the content values via a ContentResolver
+        Uri uri = getContentResolver().insert(TaskContract.TaskEntry.CONTENT_URI, contentValues);
+
+        // Display the URI that's returned with a Toast
+        // [Hint] Don't forget to call finish() to return to MainActivity after this insert is complete
+        if(uri != null) {
+            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+        }
     }
 
     public void getDataAndSetDetails(int indexYouCameFrom)
@@ -163,8 +184,20 @@ public class MovieDetails extends AppCompatActivity{
 
     public void getDataAndSetDetailsFavourites(int movieID)
     {
-        // Do a JSON request on an AsynTask
-        new FetchMovieDetailTask().execute(String.valueOf(movieID));
+        String thisMovieID = String.valueOf(movieID);
+        /**
+         * Execute an Async Task to fetch the keys for the movies' previews
+         */
+        new FetchMovieTrailerTask().execute(thisMovieID);
+
+        /**
+         * Execute another Async Task to get the reviews for this film
+         */
+        // TODO: see if its a good idea to merge this and the last AsynTask
+        new FetchMovieReviewsTask().execute(thisMovieID);
+
+        // Do a JSON request on an AsynTask to get the details for this film
+        new FetchMovieDetailTask().execute(thisMovieID);
 
         /**
          * Load the image from the static array stored in the JSONUtils class
@@ -380,7 +413,7 @@ public class MovieDetails extends AppCompatActivity{
                 try
                 {
                     // This method fills variables with data in the JSONUtils class
-                    JSONUtils.getDetailDataFromJSON(movieDetailData);
+                    JSONUtils.getDetailDataFromJSON(mMovieDetailJSON);
 
                 }
                 catch (JSONException e)
