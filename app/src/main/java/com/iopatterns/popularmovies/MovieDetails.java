@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -166,6 +165,37 @@ public class MovieDetails extends AppCompatActivity{
     {
         // Do a JSON request on an AsynTask
         new FetchMovieDetailTask().execute(String.valueOf(movieID));
+
+        /**
+         * Load the image from the static array stored in the JSONUtils class
+         */
+        Picasso.with(this).load(JSONUtils.postersURLs[0]).into(mImageThumbnail);//
+
+        /**
+         * Set the title for the film from the static array in JSONUtils class
+         */
+        mMovieTitle.setText(JSONUtils.titles[0]);
+
+        /**
+         * Set the movie Release Date from the static array in JSONUtils class
+         */
+        mMovieRelease.setText("Release Date: " + JSONUtils.releaseDates[0]);
+
+        /**
+         * Set the movie Rating Average from the static array in JSONUtils class
+         */
+        mMovieRating.setText("User Rating:    " + JSONUtils.ratings[0] + "/10");
+
+        /**
+         * Set the movie description from the static array in JSONUtils class
+         */
+        mMovieOverview.setText(JSONUtils.overviews[0]);
+
+        /**
+         * Set the movie description from the static array in JSONUtils class
+         */
+        mMovieLanguage.setText("Language:       " + JSONUtils.languages[0]);
+
     }
 
 
@@ -350,12 +380,7 @@ public class MovieDetails extends AppCompatActivity{
                 try
                 {
                     // This method fills variables with data in the JSONUtils class
-                    JSONUtils.getDataFromJSON(movieDetailData);
-
-                    // Use such variables to set the size of the grid and the posters to display
-                    mMovieAdapter.setNumberItems(JSONUtils.titles.length);
-
-                    mMovieAdapter.setMovieData(JSONUtils.postersURLs, false);
+                    JSONUtils.getDetailDataFromJSON(movieDetailData);
 
                 }
                 catch (JSONException e)
@@ -365,7 +390,8 @@ public class MovieDetails extends AppCompatActivity{
             }
             else
             {
-                showErrorMessage();
+//                showErrorMessage();
+                // TODO: implement this
             }
         }
     }

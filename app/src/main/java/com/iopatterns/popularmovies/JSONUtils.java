@@ -55,8 +55,6 @@ public final class JSONUtils {
      */
     public static void getDataFromJSON(String sourceJSON) throws JSONException{
 
-
-
         JSONObject moviesJSON = new JSONObject(sourceJSON);
 
         JSONArray moviesArray = moviesJSON.getJSONArray(RESULTS);
@@ -127,23 +125,10 @@ public final class JSONUtils {
 
     public static void getDetailDataFromJSON(String detailJSON) throws JSONException
     {
-        final String IDS        = "id";
-        final String POSTER     = "poster_path";
-        //final String RESULTS    = "results";
-        final String OVERVIEW   = "overview";
-        final String ORIGINAL   = "original_title";
-        final String RELEASE    = "release_date";
-        final String RATING     = "vote_average";
-        final String LANG       = "original_language";
-
-        final String BASE = "http://image.tmdb.org/t/p/w185/";
-
 
         JSONObject moviesJSON = new JSONObject(detailJSON);
 
         ids[0]          = moviesJSON.getString(IDS);
-
-        postersURLs[0]  = POSTER_BASE + moviesJSON.getString(POSTER);
 
         titles[0]       = moviesJSON.getString(ORIGINAL);
 
@@ -154,6 +139,8 @@ public final class JSONUtils {
         ratings[0]      = moviesJSON.getString(RATING);
 
         languages[0]    = moviesJSON.getString(LANG);
+
+        postersURLs[0]  = POSTER_BASE + moviesJSON.getString(POSTER);
 
     }
 
