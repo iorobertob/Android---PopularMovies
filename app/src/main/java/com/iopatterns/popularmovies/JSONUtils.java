@@ -33,11 +33,19 @@ public final class JSONUtils {
 
     public static URL[] trailersURLs; // TODO: see if this is slower than having a strings only array, not URLs
 
-    public static final String RESULTS = "results";
+    public static final String IDS          = "id";
+    public static final String POSTER       = "poster_path";
+    public static final String OVERVIEW     = "overview";
+    public static final String ORIGINAL     = "original_title";
+    public static final String RELEASE      = "release_date";
+    public static final String RATING       = "vote_average";
+    public static final String LANG         = "original_language";
+    public static final String RESULTS      = "results";
     public static final String TRAILER_SITE = "site";
-    public static final String TOTAL_RESULTS = "total_results";
-    public static final String YOUTUBE_KEY = "key";
-    public static final String CONTENT = "content";
+    public static final String TOTAL_RESULTS= "total_results";
+    public static final String YOUTUBE_KEY  = "key";
+    public static final String CONTENT      = "content";
+    public static final String POSTER_BASE  = "http://image.tmdb.org/t/p/w185/";
     public static final String YOUTUBE_BASE = "https://www.youtube.com/watch?v=";
 
     /**
@@ -47,16 +55,7 @@ public final class JSONUtils {
      */
     public static void getDataFromJSON(String sourceJSON) throws JSONException{
 
-        final String IDS        = "id";
-        final String POSTER     = "poster_path";
-        //final String RESULTS    = "results";
-        final String OVERVIEW   = "overview";
-        final String ORIGINAL   = "original_title";
-        final String RELEASE    = "release_date";
-        final String RATING     = "vote_average";
-        final String LANG       = "original_language";
 
-        final String BASE = "http://image.tmdb.org/t/p/w185/";
 
         JSONObject moviesJSON = new JSONObject(sourceJSON);
 
@@ -74,7 +73,7 @@ public final class JSONUtils {
         {
             ids[i]          = moviesArray.getJSONObject(i).getString(IDS);
 
-            postersURLs[i]  = BASE + moviesArray.getJSONObject(i).getString(POSTER);
+            postersURLs[i]  = POSTER_BASE + moviesArray.getJSONObject(i).getString(POSTER);
 
             titles[i]       = moviesArray.getJSONObject(i).getString(ORIGINAL);
 
@@ -124,6 +123,38 @@ public final class JSONUtils {
             Log.d("CONTENT", " " + String.valueOf(i) + ": " + review);
             reviews[i] = review;
         }
+    }
+
+    public static void getDetailDataFromJSON(String detailJSON) throws JSONException
+    {
+        final String IDS        = "id";
+        final String POSTER     = "poster_path";
+        //final String RESULTS    = "results";
+        final String OVERVIEW   = "overview";
+        final String ORIGINAL   = "original_title";
+        final String RELEASE    = "release_date";
+        final String RATING     = "vote_average";
+        final String LANG       = "original_language";
+
+        final String BASE = "http://image.tmdb.org/t/p/w185/";
+
+
+        JSONObject moviesJSON = new JSONObject(detailJSON);
+
+        ids[0]          = moviesJSON.getString(IDS);
+
+        postersURLs[0]  = POSTER_BASE + moviesJSON.getString(POSTER);
+
+        titles[0]       = moviesJSON.getString(ORIGINAL);
+
+        overviews[0]    = moviesJSON.getString(OVERVIEW);
+
+        releaseDates[0] = moviesJSON.getString(RELEASE);
+
+        ratings[0]      = moviesJSON.getString(RATING);
+
+        languages[0]    = moviesJSON.getString(LANG);
+
     }
 
 }
