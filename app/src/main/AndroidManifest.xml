@@ -25,7 +25,13 @@
         <activity
             android:name=".MovieDetails"
             android:parentActivityName=".MainActivity">
-    </activity>
+        </activity>
+
+        <provider
+            android:name="com.iopatterns.popularmovies.movieDataSystem.DataBaseProvider"
+            android:authorities="com.iopatterns.popularmovies"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

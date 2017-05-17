@@ -5,9 +5,13 @@ package com.iopatterns.popularmovies;
  *
  */
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.URL;
 
 /**
  * This class, bsed in the Udacity JSONUtils one,
@@ -17,13 +21,24 @@ import org.json.JSONObject;
  */
 public final class JSONUtils {
 
+    public static String[] ids;
     public static String[] postersURLs;
     public static String[] titles;
     public static String[] overviews;
     public static String[] releaseDates;
     public static String[] ratings;
     public static String[] languages;
+    public static String[] reviews;
+    public static String[] trailersURLStrings;
 
+    public static URL[] trailersURLs; // TODO: see if this is slower than having a strings only array, not URLs
+
+    public static final String RESULTS = "results";
+    public static final String TRAILER_SITE = "site";
+    public static final String TOTAL_RESULTS = "total_results";
+    public static final String YOUTUBE_KEY = "key";
+    public static final String CONTENT = "content";
+    public static final String YOUTUBE_BASE = "https://www.youtube.com/watch?v=";
 
     /**
      * Perform the actual extraction of the data from the JSON String
@@ -32,8 +47,9 @@ public final class JSONUtils {
      */
     public static void getDataFromJSON(String sourceJSON) throws JSONException{
 
+        final String IDS        = "id";
         final String POSTER     = "poster_path";
-        final String RESULTS    = "results";
+        //final String RESULTS    = "results";
         final String OVERVIEW   = "overview";
         final String ORIGINAL   = "original_title";
         final String RELEASE    = "release_date";
@@ -46,6 +62,7 @@ public final class JSONUtils {
 
         JSONArray moviesArray = moviesJSON.getJSONArray(RESULTS);
 
+        ids          = new String[moviesArray.length()];
         postersURLs  = new String[moviesArray.length()];
         titles       = new String[moviesArray.length()];
         overviews    = new String[moviesArray.length()];
@@ -53,7 +70,9 @@ public final class JSONUtils {
         ratings      = new String[moviesArray.length()];
         languages    = new String[moviesArray.length()];
 
-        for (int i = 0; i < moviesArray.length(); i++){
+        for (int i = 0; i < moviesArray.length(); i++)
+        {
+            ids[i]          = moviesArray.getJSONObject(i).getString(IDS);
 
             postersURLs[i]  = BASE + moviesArray.getJSONObject(i).getString(POSTER);
 
@@ -66,10 +85,45 @@ public final class JSONUtils {
             ratings[i]      = moviesArray.getJSONObject(i).getString(RATING);
 
             languages[i]    = moviesArray.getJSONObject(i).getString(LANG);
-
         }
+    }
 
+    public static void getTrailerDataFromJSON(String trailerJSON) throws JSONException
+    {
+        JSONObject trailerJSONObject = new JSONObject(trailerJSON);
 
+        JSONArray trailerArray = trailerJSONObject.getJSONArray(RESULTS);
+
+        for (int i = 0; i < 2; i++)
+        {// Only 2 trailers
+
+            // Build these YouTube's URLs only if we know they are for that website
+            // TODO: test for when there aren't 2 objects in the arary
+            if((trailerArray.getJSONObject(i).getString(TRAILER_SITE)) == "YouTube")
+            {
+                URL trailerURL = NetworkUtils.buildYouTubeURL(trailerArray.getJSONObject(i).getString(YOUTUBE_KEY));
+                trailersURLs[i] = trailerURL;
+            }
+            else
+            {
+                // TODO: Handle this!
+            }
+        }
+    }
+
+    public static void getReviewDataFromJSON(String reviewsJSON) throws JSONException
+    {
+        JSONObject reviewsJSONObject = new JSONObject(reviewsJSON);
+        JSONArray  reviewsArray      = reviewsJSONObject.getJSONArray(RESULTS);
+        int totalResults             = Integer.parseInt(reviewsJSONObject.getString(TOTAL_RESULTS));
+
+        for (int i = 0; i < totalResults; i++)
+        {
+            // TODO: test for when there aren't objects in the arary
+            String review = reviewsArray.getJSONObject(i).getString("content");
+            Log.d("CONTENT", " " + String.valueOf(i) + ": " + review);
+            reviews[i] = review;
+        }
     }
 
 }

@@ -14,13 +14,16 @@ package com.iopatterns.popularmovies;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-        import android.net.Uri;
-        import java.io.IOException;
-        import java.io.InputStream;
-        import java.net.HttpURLConnection;
-        import java.net.MalformedURLException;
-        import java.net.URL;
-        import java.util.Scanner;
+
+import android.net.Uri;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Scanner;
 
 /**
  * These utilities, based in Udacity's class,
@@ -29,7 +32,8 @@ package com.iopatterns.popularmovies;
 public final class NetworkUtils {
 
     //TODO: REPLACE THIS API KEY WITH A VALID STRING!
-    private  static final String API_KEY        = "XXXXXXXXXXXXXXXXXX";
+    // KEY: 857a9205586fa1240dc580f4185577fa
+    private  static final String API_KEY        = "857a9205586fa1240dc580f4185577fa";
 
     /**
      * This method builds an URL, from a string, by first constructing an URI.
@@ -56,6 +60,8 @@ public final class NetworkUtils {
                 .appendQueryParameter("page", String.valueOf(page));
 
         String movieDBURL = builder.build().toString();
+        // This resturns an URL that looks something like this:
+        // https://api.themoviedb.org/3/discover/movie?api_key=857a9205586fa1240dc580f4185577fa&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1
 
         URL url = null;
 
@@ -68,6 +74,119 @@ public final class NetworkUtils {
         return url;
     }
 
+    public static URL buildMovieTrailerURL(String id)
+    {
+
+        Uri.Builder builder = new Uri.Builder();
+
+        builder.scheme("https")
+                .authority("api.themoviedb.org")
+                .appendPath("3")
+                .appendPath("movie")
+                .appendPath(id)
+                .appendPath("videos")
+                .appendQueryParameter("api_key", API_KEY)
+                .appendQueryParameter("language", "en-US");
+
+        String movieDBURL = builder.build().toString();
+        // This will return an URL that looks something like this:
+        // https://api.themoviedb.org/3/movie/283995/videos?api_key=857a9205586fa1240dc580f4185577fa&language=en-US
+        Log.d("TRAILERS URL", movieDBURL);
+
+        URL url = null;
+
+        try {
+            url = new URL(movieDBURL.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    public static URL buildMovieReviewsURL(String id)
+    {
+        Uri.Builder builder = new Uri.Builder();
+
+        builder.scheme("https")
+                .authority("api.themoviedb.org")
+                .appendPath("3")
+                .appendPath("movie")
+                .appendPath(id)
+                .appendPath("reviews")
+                .appendQueryParameter("api_key", API_KEY)
+                .appendQueryParameter("language", "en-US");
+
+        String movieDBURL = builder.build().toString();
+        // This will return an URL that looks something like this:
+        // https://api.themoviedb.org/3/movie/{movie_id}/reviews?api_key=<<api_key>>&language=en-US
+        Log.d("REVIEWS URL", movieDBURL);
+
+        URL url = null;
+
+        try {
+            url = new URL(movieDBURL.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    public static URL buildYouTubeURL(String key)
+    {
+        Uri.Builder builder = new Uri.Builder(); // TODO: Abstract to have less instances? it repeats
+
+        builder.scheme("https")
+                .authority("youtube.com")
+                .appendPath("watch")
+                .appendQueryParameter("v",key);
+
+        String youTubeURL = builder.build().toString();
+        Log.d("YOUTUBE URL", youTubeURL);
+        // This will return an URL that will look like this:
+        // https://www.youtube.com/watch?v=key
+
+        URL url = null;
+
+        try
+        {
+            url = new URL(youTubeURL.toString());
+        }
+        catch(MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildMovieDetailURL(String id)
+    {
+        // This has to look something like this:
+        //https://api.themoviedb.org/3/movie/{movie_id}?api_key=<<api_key>>&language=en-US
+        Uri.Builder builder = new Uri.Builder();
+
+        builder.scheme("http")
+                .appendPath("3")
+                .appendPath("movie")
+                .appendPath(id)
+                .appendQueryParameter("api_key", API_KEY)
+                .appendQueryParameter("language", "en-US");
+
+        String movieDetailURL = builder.build().toString();
+
+        URL url = null;
+
+        try
+        {
+            url = new URL(movieDetailURL.toString());
+        }
+        catch(MalformedURLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
 
     /**
      * This method returns the entire result from the HTTP response.

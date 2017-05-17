@@ -16,6 +16,7 @@
 package com.iopatterns.popularmovies;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.iopatterns.popularmovies.movieDataSystem.DataBaseContract;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -43,6 +46,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
     private Context mContext;
 
     private String[] mMovieData;
+
+    private Cursor mCursor;
 
     /**
      * The interface that receives onClick messages.
@@ -110,7 +115,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
      * This method simply returns the number of items to display. It is used behind the scenes
      * to help layout our Views and for animations.
      *
-     * @return The number of items available
+     * @return The number of items availabl
      */
     @Override
     public int getItemCount() {
@@ -123,12 +128,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
      * extracted
      * @param data the array with URLs to posters of a list of films
      */
-    public void setMovieData(String[] data){
+    public void setMovieData(String[] data, boolean fromCursor)
+    {
+        if (fromCursor)
+        {
 
-        mMovieData = data;
+            while(mCursor.moveToFirst())
+            {
+                // TODO: update and replace column_Description with the actual column we want
+                int jpgURL = mCursor.getColumnIndex(DataBaseContract.FavouriteEntry.COLUMN_JPG_URL);
 
+                mMovieData[mCursor.getPosition()] = mCursor.getString(jpgURL);
+            }
+
+            setNumberItems(mCursor.getCount());
+        }
+        else
+        {
+            mMovieData = data;
+        }
         notifyDataSetChanged();
-
     }
 
     /**
@@ -143,6 +162,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
 
         notifyDataSetChanged();
 
+    }
+
+    public void swapCursor(Cursor newCursor)
+    {
+        mCursor = newCursor;
     }
 
     /**
@@ -190,7 +214,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
          * @param v The View that was clicked
          */
         @Override
-        public void onClick(View v) {
+        public void onClick(View v)
+        {
             int clickedPosition = getAdapterPosition();
             mOnClickListener.onListItemClick(clickedPosition);
         }
