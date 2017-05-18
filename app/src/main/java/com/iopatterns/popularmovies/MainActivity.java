@@ -122,16 +122,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         goToOtherActivity.putExtra("INDEX", clickedItemIndex);
         goToOtherActivity.putExtra("MOVIES_JSON", mMoviesJSON);
         goToOtherActivity.putExtra("FROM_FAVOURITES", mFromFavourites);
-
-        if(mFromFavourites)
-        {
-            goToOtherActivity.putExtra("MOVIE_ID", JSONUtils.ids[clickedItemIndex]);
-        }
+        goToOtherActivity.putExtra("MOVIE_ID", JSONUtils.ids[clickedItemIndex]);
 
         startActivity(goToOtherActivity);
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -140,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         return super.onCreateOptionsMenu(menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -249,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
             // Fill the String[] with urls for the jpg of movie posters from the Cursor obtained
             // from the query made with the Content Provider from the Loader called above.
-            mMovieAdapter.setMovieData(null, true);
+            mMovieAdapter.setMoviePosterURLsData(null, true);
         }
         else
         {
@@ -283,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
      * Create an anonymous implementation of OnClickListener
      * The Next Page and Previous Page buttons are handled here.
      */
-
     private View.OnClickListener buttonsListener = new View.OnClickListener() {
 
         public void onClick(View v) {
@@ -463,7 +456,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
                     // Use such variables to set the size of the grid and the posters to display
                     mMovieAdapter.setNumberItems(JSONUtils.titles.length);
 
-                    mMovieAdapter.setMovieData(JSONUtils.postersURLs, false);
+                    mMovieAdapter.setMoviePosterURLsData(JSONUtils.postersURLs, false);
 
                 }
                 catch (JSONException e)

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.iopatterns.popularmovies.movieDataSystem.DataBaseContract;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -125,11 +126,12 @@ public class MovieDetails extends AppCompatActivity{
         ContentValues contentValues = new ContentValues();
 
         // Put the task description and selected mPriority into the ContentValues
-        contentValues.put(TaskContract.TaskEntry.COLUMN_DESCRIPTION, input);
-        contentValues.put(TaskContract.TaskEntry.COLUMN_PRIORITY, mPriority);
+//        contentValues.put(TaskContract.TaskEntry.COLUMN_DESCRIPTION, input);
+        //TODO: add to the database the url of the poster
+        contentValues.put(DataBaseContract.FavouriteEntry.COLUMN_MOVIE_ID, mMovieID);
 
         // Insert the content values via a ContentResolver
-        Uri uri = getContentResolver().insert(TaskContract.TaskEntry.CONTENT_URI, contentValues);
+        Uri uri = getContentResolver().insert(DataBaseContract.FavouriteEntry.CONTENT_URI, contentValues);
 
         // Display the URI that's returned with a Toast
         // [Hint] Don't forget to call finish() to return to MainActivity after this insert is complete

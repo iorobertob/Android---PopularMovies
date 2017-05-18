@@ -45,7 +45,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
 
     private Context mContext;
 
-    private String[] mMovieData;
+    private String[] mMoviePosterURLsData;
+    private String[] mMovieIDs;
 
     private Cursor mCursor;
 
@@ -128,24 +129,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
      * extracted
      * @param data the array with URLs to posters of a list of films
      */
-    public void setMovieData(String[] data, boolean fromCursor)
+    public void setMoviePosterURLsData(String[] data, boolean fromCursor)
     {
         if (fromCursor)
         {
-
             while(mCursor.moveToFirst())
             {
                 // TODO: update and replace column_Description with the actual column we want
-                int jpgURL = mCursor.getColumnIndex(DataBaseContract.FavouriteEntry.COLUMN_JPG_URL);
+                int jpgURL  = mCursor.getColumnIndex(DataBaseContract.FavouriteEntry.COLUMN_JPG_URL);
+                int movieID = mCursor.getColumnIndex(DataBaseContract.FavouriteEntry.COLUMN_MOVIE_ID);
 
-                mMovieData[mCursor.getPosition()] = mCursor.getString(jpgURL);
+                mMoviePosterURLsData[mCursor.getPosition()] = mCursor.getString(jpgURL);
+
+                JSONUtils.ids[mCursor.getPosition()]        = mCursor.getString(movieID);
+//                mMovieIDs[mCursor.getPosition()]            = mCursor.getString(movieID);
             }
-
             setNumberItems(mCursor.getCount());
         }
         else
         {
-            mMovieData = data;
+            mMoviePosterURLsData = data;
         }
         notifyDataSetChanged();
     }
@@ -199,11 +202,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
          */
         void bind(int listIndex) {
 
-            if (mMovieData != null  ) {
+            if (mMoviePosterURLsData != null  ) {
                 try {
-                    Picasso.with(mContext).load(mMovieData[listIndex]).memoryPolicy(MemoryPolicy.NO_CACHE).into(moviePoster);
+                    Picasso.with(mContext).load(mMoviePosterURLsData[listIndex]).memoryPolicy(MemoryPolicy.NO_CACHE).into(moviePoster);
                 } catch (java.lang.IllegalArgumentException e) {
-                    Log.v("mMovieData", "is still empty");
+                    Log.v("mMoviePosterURLsData", "is still empty");
                 }
             }
 
