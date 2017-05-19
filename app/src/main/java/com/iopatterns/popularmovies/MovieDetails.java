@@ -2,15 +2,18 @@ package com.iopatterns.popularmovies;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.iopatterns.popularmovies.databinding.ContentMovieDetailsBinding;
 import com.iopatterns.popularmovies.movieDataSystem.DataBaseContract;
 import com.squareup.picasso.Picasso;
 
@@ -18,13 +21,15 @@ import org.json.JSONException;
 
 import java.net.URL;
 
-import static android.R.id.input;
-
 /**
  * This class is the Child activity that shows the Detailed view for a film, including the
  * Title, Release Data, Language, Rating and Overview
  */
 public class MovieDetails extends AppCompatActivity{
+
+    // This is an automatically generated class for the data binding. Note how the name is created
+    // from the name of the layout it works with.
+    ContentMovieDetailsBinding mBinding;
 
     private ImageView   mImageThumbnail;
     private TextView    mMovieTitle;
@@ -48,7 +53,10 @@ public class MovieDetails extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_movie_details);
 
-        initGUIDetail();
+        // TODO: see if this is overriding the previous setContentView call just above
+        mBinding = DataBindingUtil.setContentView(this, R.layout.content_movie_details);
+
+        //initGUIDetail();
 
         Intent fromPrevActivity = getIntent();
 
@@ -71,6 +79,7 @@ public class MovieDetails extends AppCompatActivity{
          */
         if(fromPrevActivity.hasExtra("MOVIE_ID")){
             mMovieID     = fromPrevActivity.getIntExtra("MOVIE_ID", 0);
+            Log.d("MOVIE ID", String.valueOf(mMovieID));
         }
 
 
@@ -110,16 +119,17 @@ public class MovieDetails extends AppCompatActivity{
 
     public void initGUIDetail()
     {
-        mImageThumbnail = (ImageView) findViewById(R.id.iv_movie_thumb);
-        mMovieTitle     = (TextView)  findViewById(R.id.tv_movieTitle);
-        mMovieRelease   = (TextView)  findViewById(R.id.tv_movieRelease);
-        mMovieRating    = (TextView)  findViewById(R.id.tv_movieRating);
-        mMovieOverview  = (TextView)  findViewById(R.id.tv_movieOverview);
-        mMovieLanguage  = (TextView)  findViewById(R.id.tv_movieLanguage);
+//        mImageThumbnail = (ImageView) findViewById(R.id.iv_movie_thumb);
+//        mMovieTitle     = (TextView)  findViewById(R.id.tv_movieTitle);
+//        mMovieRelease   = (TextView)  findViewById(R.id.tv_movieRelease);
+//        mMovieRating    = (TextView)  findViewById(R.id.tv_movieRating);
+//        mMovieOverview  = (TextView)  findViewById(R.id.tv_movieOverview);
+//        mMovieLanguage  = (TextView)  findViewById(R.id.tv_movieLanguage);
     }
 
-    public void addToFavourites()
+    public void addToFavourites(View view)
     {
+        Log.d("INTO THE DREAM WORLD", "OOOOOOOO");
         // Insert new Favourite film to dataBase via a ContentResolver
 
         // Create new empty ContentValues object
@@ -129,14 +139,20 @@ public class MovieDetails extends AppCompatActivity{
 //        contentValues.put(TaskContract.TaskEntry.COLUMN_DESCRIPTION, input);
         //TODO: add to the database the url of the poster
         contentValues.put(DataBaseContract.FavouriteEntry.COLUMN_MOVIE_ID, mMovieID);
+        contentValues.put(DataBaseContract.FavouriteEntry.COLUMN_JPG_URL, JSONUtils.postersURLs[mIndexYouCameFrom]);
 
         // Insert the content values via a ContentResolver
         Uri uri = getContentResolver().insert(DataBaseContract.FavouriteEntry.CONTENT_URI, contentValues);
 
         // Display the URI that's returned with a Toast
         // [Hint] Don't forget to call finish() to return to MainActivity after this insert is complete
-        if(uri != null) {
+        if(uri != null)
+        {
             Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            Toast.makeText(getBaseContext(), "Nothing happened", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -156,32 +172,32 @@ public class MovieDetails extends AppCompatActivity{
         /**
          * Load the image from the static array stored in the JSONUtils class
          */
-        Picasso.with(this).load(JSONUtils.postersURLs[indexYouCameFrom]).into(mImageThumbnail);//
+        Picasso.with(this).load(JSONUtils.postersURLs[indexYouCameFrom]).into(mBinding.movieDetailHeader.ivMovieThumb);//
 
         /**
          * Set the title for the film from the static array in JSONUtils class
          */
-        mMovieTitle.setText(JSONUtils.titles[indexYouCameFrom]);
+        mBinding.tvMovieTitle.setText(JSONUtils.titles[indexYouCameFrom]);
 
         /**
          * Set the movie Release Date from the static array in JSONUtils class
          */
-        mMovieRelease.setText("Release Date: " + JSONUtils.releaseDates[indexYouCameFrom]);
+        mBinding.movieDetailHeader.tvRelease.setText("Release Date: " + JSONUtils.releaseDates[indexYouCameFrom]);
 
         /**
          * Set the movie Rating Average from the static array in JSONUtils class
          */
-        mMovieRating.setText("User Rating:    " + JSONUtils.ratings[indexYouCameFrom] + "/10");
+        mBinding.movieDetailHeader.tvMovieRating.setText("User Rating:    " + JSONUtils.ratings[indexYouCameFrom] + "/10");
 
         /**
          * Set the movie description from the static array in JSONUtils class
          */
-        mMovieOverview.setText(JSONUtils.overviews[indexYouCameFrom]);
+        mBinding.tvMovieOverview.setText(JSONUtils.overviews[indexYouCameFrom]);
 
         /**
          * Set the movie description from the static array in JSONUtils class
          */
-        mMovieLanguage.setText("Language:       " + JSONUtils.languages[indexYouCameFrom]);
+        mBinding.movieDetailHeader.tvMovieLanguage.setText("Language:       " + JSONUtils.languages[indexYouCameFrom]);
     }
 
     public void getDataAndSetDetailsFavourites(int movieID)
@@ -204,32 +220,32 @@ public class MovieDetails extends AppCompatActivity{
         /**
          * Load the image from the static array stored in the JSONUtils class
          */
-        Picasso.with(this).load(JSONUtils.postersURLs[0]).into(mImageThumbnail);//
+        Picasso.with(this).load(JSONUtils.postersURLs[0]).into(mBinding.movieDetailHeader.ivMovieThumb);//
 
         /**
          * Set the title for the film from the static array in JSONUtils class
          */
-        mMovieTitle.setText(JSONUtils.titles[0]);
+        mBinding.tvMovieTitle.setText(JSONUtils.titles[0]);
 
         /**
          * Set the movie Release Date from the static array in JSONUtils class
          */
-        mMovieRelease.setText("Release Date: " + JSONUtils.releaseDates[0]);
+        mBinding.movieDetailHeader.tvRelease.setText("Release Date: " + JSONUtils.releaseDates[0]);
 
         /**
          * Set the movie Rating Average from the static array in JSONUtils class
          */
-        mMovieRating.setText("User Rating:    " + JSONUtils.ratings[0] + "/10");
+        mBinding.movieDetailHeader.tvRelease.setText("User Rating:    " + JSONUtils.ratings[0] + "/10");
 
         /**
          * Set the movie description from the static array in JSONUtils class
          */
-        mMovieOverview.setText(JSONUtils.overviews[0]);
+        mBinding.tvMovieOverview.setText(JSONUtils.overviews[0]);
 
         /**
          * Set the movie description from the static array in JSONUtils class
          */
-        mMovieLanguage.setText("Language:       " + JSONUtils.languages[0]);
+        mBinding.movieDetailHeader.tvMovieLanguage.setText("Language:       " + JSONUtils.languages[0]);
 
     }
 

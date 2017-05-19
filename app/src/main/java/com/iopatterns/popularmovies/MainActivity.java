@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         LoaderManager.LoaderCallbacks<Cursor>
 {
 
+
+
     private RecyclerView    mRecyclerViewMovies;
     private TextView        mTextViewError;
     private MovieAdapter    mMovieAdapter;
