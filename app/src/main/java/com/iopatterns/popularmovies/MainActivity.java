@@ -31,7 +31,6 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener,
         LoaderManager.LoaderCallbacks<Cursor>
 {
-
     private RecyclerView    mRecyclerViewMovies;
     private TextView        mTextViewError;
     private MovieAdapter    mMovieAdapter;
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         mMovieAdapter = new MovieAdapter(10, this);
 
         mRecyclerViewMovies.setAdapter(mMovieAdapter);
-
     }
 
     /**
