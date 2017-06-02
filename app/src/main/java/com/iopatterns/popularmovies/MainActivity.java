@@ -32,8 +32,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         LoaderManager.LoaderCallbacks<Cursor>
 {
 
-
-
     private RecyclerView    mRecyclerViewMovies;
     private TextView        mTextViewError;
     private MovieAdapter    mMovieAdapter;
@@ -45,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private static final String BY_POPULARITY   = "popularity.desc";
     private static final String BY_RATING       = "vote_average.desc";
+    private static final String BY_FAVOURITES   = "byFavourites";
 
     private static final int FAVOURITES_LOADER_ID = 1;
 
@@ -54,10 +53,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     private String mMoviesJSON;
 
     // true = Popularity, false = Rated
-    private boolean mPopular        = true;
+    private int mSortBy             = 2;  // 1=byRating |  2=byPopularity   |  3=byFavourites
     private boolean mFromFavourites = false;
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static boolean mIsCursorStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -71,19 +72,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         // If we are coming back from another Activity restore the type of sorting and page we were at
         if(savedInstanceState != null)
         {
-            mPopular = savedInstanceState.getBoolean("PUPULAR");
+            mSortBy = savedInstanceState.getInt("SORT_CRITERIA");
             mPage = savedInstanceState.getInt("PAGE");
-
         }
 
         // Display differently depending on user selection
-        if(mPopular)
+        if     (mSortBy == 1)
+        {
+            getMovies(BY_RATING);
+        }
+        else if(mSortBy == 2)
         {
             getMovies(BY_POPULARITY);
         }
         else
         {
-            getMovies(BY_RATING);
+            getMovies(BY_FAVOURITES);
         }
 
         // Vertical Grid with 3 Columns
@@ -98,12 +102,37 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     }
 
+    /**
+     * This method is called after this activity has been paused or restarted.
+     * Often, this is after new data has been inserted through an AddTaskActivity,
+     * so this restarts the loader to re-query the underlying data for any changes.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(mSortBy == 3)
+        {
+            // re-queries for all tasks
+            if(mIsCursorStarted == false)
+            {
+                getSupportLoaderManager().initLoader(FAVOURITES_LOADER_ID, null, this);
+                mIsCursorStarted = true;
+            }
+            else
+            {
+                Log.d("getMovies", "by cursor is started");
+                getSupportLoaderManager().restartLoader(FAVOURITES_LOADER_ID, null, this);
+            }
+        }
+        Log.d("ON RESUME","");
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
         // Save the type of sorting and page we are at
-        outState.putBoolean("POPULAR", mPopular);
+        outState.putInt("SORT_CRITERIA", mSortBy);
         outState.putInt("PAGE", mPage);
 
         super.onSaveInstanceState(outState);
@@ -146,12 +175,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         // Execute the AsyncTask with this URL to get movies sorted by votes
         if (itemID == R.id.sort_rating)
         {
-            if(mPopular == true)
+            if(mSortBy != 1)
             {
                 mPage = 1;
                 getMovies(BY_RATING);
 
-                mPopular = false;
+                mSortBy = 1;
                 mNextButton.setEnabled(true);
                 mPrevButton.setEnabled(false);
                 mPageNumber.setText(String.valueOf(mPage));
@@ -163,13 +192,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         if (itemID == R.id.sort_popularity)
         {
 
-            if(mPopular == false)
+            if(mSortBy != 2)
             {
-
                 mPage = 1;
                 getMovies(BY_POPULARITY);
 
-                mPopular = true;
+                mSortBy = 2;
                 mNextButton.setEnabled(true);
                 mPrevButton.setEnabled(false);
                 mPageNumber.setText(String.valueOf(mPage));
@@ -179,7 +207,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         if (itemID == R.id.sort_favourites)
         {
-            getMovies("byFavourites");
+            if(mSortBy != 3)
+            {
+                mPage = 1;
+                getMovies(BY_FAVOURITES);
+                mSortBy = 3;
+                mNextButton.setEnabled(true);
+                mPrevButton.setEnabled(false);
+                mPageNumber.setText(String.valueOf(mPage));
+                mscroll.fullScroll(ScrollView.FOCUS_UP);
+
+            }
+
 
             // TODO: do all the pages enabling logic
             mscroll.fullScroll(ScrollView.FOCUS_UP);
@@ -241,11 +280,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             * created and (if the activity/fragment is currently started) starts the loader. Otherwise
             * the last created loader is re-used.
             */
-            getSupportLoaderManager().initLoader(FAVOURITES_LOADER_ID, null, this);
+            if(mIsCursorStarted == false)
+            {
+                getSupportLoaderManager().initLoader(FAVOURITES_LOADER_ID, null, this);
+                mIsCursorStarted = true;
+            }
+            else
+            {
+                Log.d("getMovies", "by cursor is started");
+                getSupportLoaderManager().restartLoader(FAVOURITES_LOADER_ID, null, this);
+            }
+
+//
 
             // Fill the String[] with urls for the jpg of movie posters from the Cursor obtained
             // from the query made with the Content Provider from the Loader called above.
-            mMovieAdapter.setMoviePosterURLsData(null, true);
+            Log.d("getMovies", "by Favourites");
+
         }
         else
         {
@@ -275,63 +326,77 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         mLoadingIndicator.setVisibility(View.INVISIBLE);
     }
 
+    public void handlePages(View v)
+    {
+        // Move to the next page
+        if(v.getId() ==  R.id.button_forward){
+
+            mPage += 1;
+
+            if(mPage > 1){
+                mPrevButton.setEnabled(true);
+            }
+            if(mPage == 1000){
+                mNextButton.setEnabled(false);
+            }
+
+            if(mSortBy == 1)
+            {
+                getMovies(BY_RATING);
+            }
+            else if(mSortBy == 2)
+            {
+                getMovies(BY_POPULARITY);
+            }
+            else
+            {
+                getMovies(BY_FAVOURITES);
+            }
+        }
+
+        if(v.getId() ==  R.id.button_back){
+            mPage -= 1;
+            if (mPage == 1){
+                mPrevButton.setEnabled(false);
+            }
+            if(mPage < 1000){
+                mNextButton.setEnabled(true);
+            }
+
+            if(mSortBy == 1)
+            {
+                getMovies(BY_RATING);
+            }
+            else if(mSortBy == 2)
+            {
+                getMovies(BY_POPULARITY);
+            }
+            else
+            {
+                getMovies(BY_FAVOURITES);
+            }
+        }
+
+        mPageNumber.setText(String.valueOf(mPage));
+
+        mscroll.fullScroll(ScrollView.FOCUS_UP);
+    }
+
     /**
      * Create an anonymous implementation of OnClickListener
      * The Next Page and Previous Page buttons are handled here.
      */
     private View.OnClickListener buttonsListener = new View.OnClickListener() {
 
-        public void onClick(View v) {
-
-            // Move to the next page
-            if(v.getId() ==  R.id.button_forward){
-
-                mPage += 1;
-
-                if(mPage > 1){
-                    mPrevButton.setEnabled(true);
-                }
-                if(mPage == 1000){
-                    mNextButton.setEnabled(false);
-                }
-
-                if(mPopular){
-                    getMovies(BY_POPULARITY);
-                }
-                else{
-                    getMovies(BY_RATING);
-                }
-                mPageNumber.setText(String.valueOf(mPage));
-
-                mscroll.fullScroll(ScrollView.FOCUS_UP);
-            }
-
-            if(v.getId() ==  R.id.button_back){
-                mPage -= 1;
-                if (mPage == 1){
-                    mPrevButton.setEnabled(false);
-                }
-                if(mPage < 1000){
-                    mNextButton.setEnabled(true);
-                }
-
-                if(mPopular){
-                    getMovies(BY_POPULARITY);
-                }
-                else{
-                    getMovies(BY_RATING);
-                }
-
-                mPageNumber.setText(String.valueOf(mPage));
-
-                mscroll.fullScroll(ScrollView.FOCUS_UP);
-            }
-
+        public void onClick(View v)
+        {
+            handlePages(v);
         }
     };
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d("ON CREATE LOADER", "-1");
         return new AsyncTaskLoader<Cursor>(this)
         {
 
@@ -342,15 +407,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             @Override
             protected void onStartLoading()
             {
+                Log.d("ON START LOADER", "0");
+
                 if (mFavouriteData != null)
                 {
                     // Delivers any previously loaded data immediately
                     deliverResult(mFavouriteData);
+                    Log.d("ON START LOADER", "1");
                 }
                 else
                 {
                     // Force a new load
                     forceLoad();
+                    Log.d("ON START LOADER", "2");
                 }
             }
 
@@ -358,14 +427,24 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             @Override
             public Cursor loadInBackground() {
                 // Will implement to load data
-
+                Log.d("ON START LOADER", "3");
                 // Query and load all favourite data in the background; sort by priority
                 try {
-                    return getContentResolver().query(DataBaseContract.FavouriteEntry.CONTENT_URI,
+                    Log.d("ON START LOADER", "4");
+                    Cursor cursor = getContentResolver().query(DataBaseContract.FavouriteEntry.CONTENT_URI,
                             null,
                             null,
                             null,
                             DataBaseContract.FavouriteEntry._ID);
+
+                    if(cursor == null)
+                    {
+                        Log.d("CURSOR IS NULL", "LLLLLL");
+                    }
+                    Log.d("IT WAS NOT NULL","");
+
+                    return cursor;
+
 
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to asynchronously load data.");
@@ -375,7 +454,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             }
 
             // deliverResult sends the result of the load, a Cursor, to the registered listener
-            public void deliverResult(Cursor data) {
+            public void deliverResult(Cursor data)
+            {
+                Log.d("ON START LOADER", "5");
                 mFavouriteData = data;
                 super.deliverResult(data);
             }
@@ -387,11 +468,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     {
         // Update the data that the adapter uses to create ViewHolder via a Cursor
         mMovieAdapter.swapCursor(data);
+        mMovieAdapter.setMoviePosterURLsData(null, true);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader)
     {
+        Log.d("ON_LOADER_RESET","");
         // TODO: check the behaviour of this
         mMovieAdapter.swapCursor(null);
     }

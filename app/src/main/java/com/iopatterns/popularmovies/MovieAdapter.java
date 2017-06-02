@@ -133,7 +133,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
     {
         if (fromCursor)
         {
-            while(mCursor.moveToFirst())
+            while(mCursor.moveToNext())
             {
                 // TODO: update and replace column_Description with the actual column we want
                 int jpgURL  = mCursor.getColumnIndex(DataBaseContract.FavouriteEntry.COLUMN_JPG_URL);
@@ -142,7 +142,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
                 mMoviePosterURLsData[mCursor.getPosition()] = mCursor.getString(jpgURL);
 
                 JSONUtils.ids[mCursor.getPosition()]        = mCursor.getString(movieID);
-//                mMovieIDs[mCursor.getPosition()]            = mCursor.getString(movieID);
             }
             setNumberItems(mCursor.getCount());
         }
@@ -169,6 +168,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
 
     public void swapCursor(Cursor newCursor)
     {
+        Log.d("SWAP CURSOR", "BLAH");
         mCursor = newCursor;
     }
 
