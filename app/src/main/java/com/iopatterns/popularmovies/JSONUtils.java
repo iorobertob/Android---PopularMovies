@@ -4,13 +4,10 @@ package com.iopatterns.popularmovies;
  * Created by IOPatterns 2017
  *
  */
-
 import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.net.URL;
 
 /**
