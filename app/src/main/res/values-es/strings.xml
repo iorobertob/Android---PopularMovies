@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Peliculas Populares</string>
+    <string name="error">Error al cargar la informacion</string>
+    <string name="title_activity_movie_details">Detalles del filme</string>
+    <string name="by_popularity">por Popularidad</string>
+    <string name="by_rate">por Calificacion</string>
+    <string name="by_favourite">por Favoritos</string>
+    <string name="about">Acerca de..</string>
+    <string name="about_dialog">por Roberto Becerra, 2017 \n
+     En Construccion</string>
+    <string name="ok">OK</string>
+
+</resources>
