@@ -31,13 +31,6 @@ public class MovieDetails extends AppCompatActivity{
     // from the name of the layout it works with.
     ContentMovieDetailsBinding mBinding;
 
-    private ImageView   mImageThumbnail;
-    private TextView    mMovieTitle;
-    private TextView    mMovieRelease;
-    private TextView    mMovieRating;
-    private TextView    mMovieOverview;
-    private TextView    mMovieLanguage;
-
     private int         mIndexYouCameFrom;
     private int         mMovieID;
     private boolean     mFromFavourites;
@@ -115,16 +108,6 @@ public class MovieDetails extends AppCompatActivity{
             }
         }
 
-    }
-
-    public void initGUIDetail()
-    {
-//        mImageThumbnail = (ImageView) findViewById(R.id.iv_movie_thumb);
-//        mMovieTitle     = (TextView)  findViewById(R.id.tv_movieTitle);
-//        mMovieRelease   = (TextView)  findViewById(R.id.tv_movieRelease);
-//        mMovieRating    = (TextView)  findViewById(R.id.tv_movieRating);
-//        mMovieOverview  = (TextView)  findViewById(R.id.tv_movieOverview);
-//        mMovieLanguage  = (TextView)  findViewById(R.id.tv_movieLanguage);
     }
 
     public void addToFavourites(View view)

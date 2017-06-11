@@ -51,7 +51,11 @@ public class MainActivityCoffee {
                                                 0)),
                                 0),
                         isDisplayed()));
-        textView.check(matches(withText("Popular Movies")));
+
+        ViewInteraction textViewPage =
+             onView(withId(R.id.tv_page_number));
+
+        textViewPage.check(matches(withText("3")));
 
     }
 

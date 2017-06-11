@@ -59,6 +59,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private static boolean mIsCursorStarted = false;
 
+
+    public static long addToTest(long x, long y)
+    {
+        return x + y;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
