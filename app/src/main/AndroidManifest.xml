@@ -30,7 +30,23 @@
         <provider
             android:name="com.iopatterns.popularmovies.movieDataSystem.DataBaseProvider"
             android:authorities="com.iopatterns.popularmovies"
-            android:exported="false"/>
+            android:exported="false">
+        </provider>
+
+        <receiver android:name=".widget.MovieWidgetProvider" >
+            <intent-filter>
+                <action
+                    android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+                <action
+                    android:name="com.iopatterns.popularmovies.ACTION_DATA_UPDATED">
+                </action>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/movie_widget_info" >
+            </meta-data>
+        </receiver>
 
     </application>
 

@@ -1,6 +1,7 @@
 package com.iopatterns.popularmovies;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -9,8 +10,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.iopatterns.popularmovies.databinding.ContentMovieDetailsBinding;
@@ -40,6 +39,9 @@ public class MovieDetails extends AppCompatActivity{
     private String      mMovieDetailJSON;
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    public static final String ACTION_DATA_UPDATED =
+            "com.iopatterns.popularmovies.ACTION_DATA_UPDATED";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +139,21 @@ public class MovieDetails extends AppCompatActivity{
         {
             Toast.makeText(getBaseContext(), "Nothing happened", Toast.LENGTH_LONG).show();
         }
+        updateWidgets();
+    }
+
+    private void updateWidgets()
+    {
+        Context context = getBaseContext();
+
+        Log.d("WIDGET 2", "KDJF;ALKDJFAL;KDJ");
+
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
+
+        Log.d("WIDGET 3", "KDJF;ALKDJFAL;KDJ");
     }
 
     public void getDataAndSetDetails(int indexYouCameFrom)
@@ -231,7 +248,6 @@ public class MovieDetails extends AppCompatActivity{
         mBinding.movieDetailHeader.tvMovieLanguage.setText("Language:       " + JSONUtils.languages[0]);
 
     }
-
 
     public class FetchMovieTrailerTask extends AsyncTask<String, Void, String>
     {
